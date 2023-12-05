@@ -8,4 +8,4 @@ result = 0
 for i, line in enumerate(lines):
     pass
 
-print(f'Result: {result}')
+print(f"Result: {result}")

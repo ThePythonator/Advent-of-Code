@@ -8,7 +8,7 @@ day = today.day
 year = today.year
 
 new_year = f"{year}"
-new_dir = f"Day {day}"
+new_dir = f"Day {day:02}"
 full_path = os.path.join(SCRIPT_PATH, new_year, new_dir)
 
 url = f"https://adventofcode.com/{year}/day/{day}/input"
