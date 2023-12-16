@@ -31,8 +31,15 @@ else:
 
     with open(input_path, "w+") as f:
         f.writelines(result.text)
-
+        
     print("Created file \"input.txt\".")
+    
+    sample_path = os.path.join(full_path, "sample.txt")
+
+    with open(sample_path, "w+") as f:
+        f.writelines("Sample goes here")
+
+    print("Created file \"sample.txt\".")
 
     print("Copying template files...")
 
