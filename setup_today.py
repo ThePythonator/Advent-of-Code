@@ -7,6 +7,15 @@ today = datetime.datetime.today()
 day = today.day
 year = today.year
 
+if today.month != 12 or today.day > 25:
+    year = int(input("Enter year: "))
+    if year > today.year:
+        raise ValueError(f"Invalid year entered (we haven't reached {year}) yet!")
+
+    day = int(input("Enter day: "))
+    if day > 25:
+        raise ValueError(f"Invalid day entered (number must be at most 25)!")
+
 new_year = f"{year}"
 new_dir = f"Day {day:02}"
 full_path = os.path.join(SCRIPT_PATH, new_year, new_dir)
