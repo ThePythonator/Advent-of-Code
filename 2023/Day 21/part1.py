@@ -14,13 +14,9 @@ def plots_reachable(lines, steps, x, y):
         parity = (steps + 1) % 2
         for dx, dy in [(1,0),(0,1),(-1,0),(0,-1)]:
             nx, ny = x + dx, y + dy
-            mx = nx % len(lines[0][0])
-            my = ny % len(lines[0])
-            # if nx < 0 or nx >= len(lines[0][0]) or ny < 0 or ny >= len(lines[0]):
-            #     continue
-            # print(steps, nx, ny)
-            if lines[parity][my][mx] != "#" and (nx,ny) not in visited[parity]:
-                # print("success")
+            mx = nx % len(lines[0])
+            my = ny % len(lines)
+            if lines[my][mx] != "#" and (nx,ny) not in visited[parity]:
                 visited[parity].add((nx,ny))
                 totals[parity] += 1
                 if steps > 1:
@@ -34,7 +30,7 @@ def solve(lines, steps):
             if c == "S":
                 pos = (j, i)
     
-    result = plots_reachable([lines for _ in range(2)], steps, pos[0], pos[1])[0]
+    result = plots_reachable(lines, steps, pos[0], pos[1])[0]
 
     return result
 
