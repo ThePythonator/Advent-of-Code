@@ -1,5 +1,9 @@
 import os
-INPUT_FILE = os.path.join(os.path.dirname(__file__), "input.txt")
+from time import time
+SCRIPT_PATH = os.path.abspath(os.path.dirname(__file__))
+
+############################################################
+# Main solution code here
 
 def get_distance_at_time(speed, fly_time, rest_time, target_time):
     cycle_time = fly_time + rest_time
@@ -10,14 +14,11 @@ def get_distance_at_time(speed, fly_time, rest_time, target_time):
 
     return full_cycles * cycle_distance + min(fly_time, remainder_time) * speed
 
-
-TARGET_TIME = 2503
-
-reindeer = []
-
-with open(INPUT_FILE) as f:
-    for line in f.readlines():
-        line = line.strip().split(" ")
+def solve(lines):
+    TARGET_TIME = 2503
+    reindeer = []
+    for line in lines:
+        line = line.split(" ")
         name = line[0]
         speed = int(line[3])
         fly_time = int(line[6])
@@ -25,6 +26,25 @@ with open(INPUT_FILE) as f:
 
         reindeer.append((name, get_distance_at_time(speed=speed, fly_time=fly_time, rest_time=rest_time, target_time=TARGET_TIME)))
 
-result = max(reindeer, key=lambda a: a[1])
+    return max(reindeer, key=lambda a: a[1])[1]
 
-print(f"Result: {result}")
+############################################################
+# Boilerplate
+
+with open(os.path.join(SCRIPT_PATH, "input.txt")) as f:
+    puzzle = [line.strip() for line in f.readlines()]
+
+UNITS = ["s", "ms", "μs"]
+
+PUZZLE_START = time()
+puzzle_result = solve(puzzle)
+time_taken = time() - PUZZLE_START
+
+unit_idx = 0
+while time_taken < 1 and unit_idx < len(UNITS) - 1:
+    time_taken *= 1000
+    unit_idx += 1
+
+print("Puzzle:")
+print(f"Time: {time_taken:.2f}{UNITS[unit_idx]}")
+print(f"Result: {puzzle_result}")

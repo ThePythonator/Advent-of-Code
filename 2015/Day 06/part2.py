@@ -14,13 +14,13 @@ def solve(lines):
         for x in range(start[0], end[0]+1):
             for y in range(start[1], end[1]+1):
                 if s[0] == "toggle":
-                    grid[y][x] = 1 - grid[y][x]
+                    grid[y][x] += 2
                 
                 elif s[1] == "on":
-                    grid[y][x] = 1
+                    grid[y][x] += 1
 
                 elif s[1] == "off":
-                    grid[y][x] = 0
+                    grid[y][x] = max(grid[y][x] - 1, 0)
     return sum([sum(row) for row in grid])
 
 ############################################################

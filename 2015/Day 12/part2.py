@@ -1,7 +1,10 @@
 import json
+import os
+from time import time
+SCRIPT_PATH = os.path.abspath(os.path.dirname(__file__))
 
-with open('input.txt') as f:
-    lines = [line.strip() for line in f.readlines()]
+############################################################
+# Main solution code here
 
 def traverse(j):
     if type(j) == dict and "red" in j.values():
@@ -22,9 +25,26 @@ def traverse(j):
     print(j)
     input("oops")
 
+def solve(lines):
+    return traverse(json.loads(lines[0]))
 
-l = json.loads(lines[0])
+############################################################
+# Boilerplate
 
-result = traverse(l)
+with open(os.path.join(SCRIPT_PATH, "input.txt")) as f:
+    puzzle = [line.strip() for line in f.readlines()]
 
-print(f'Result: {result}')
+UNITS = ["s", "ms", "μs"]
+
+PUZZLE_START = time()
+puzzle_result = solve(puzzle)
+time_taken = time() - PUZZLE_START
+
+unit_idx = 0
+while time_taken < 1 and unit_idx < len(UNITS) - 1:
+    time_taken *= 1000
+    unit_idx += 1
+
+print("Puzzle:")
+print(f"Time: {time_taken:.2f}{UNITS[unit_idx]}")
+print(f"Result: {puzzle_result}")

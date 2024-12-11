@@ -1,72 +1,82 @@
-with open('input.txt') as f:
-    lines = [line.strip() for line in f.readlines()]
+import os
+from time import time
+SCRIPT_PATH = os.path.abspath(os.path.dirname(__file__))
 
-wires = {'b': 956}
+############################################################
+# Main solution code here
 
-lines.remove('14146 -> b')
+def solve(lines):
+    wires = {'b': 956}
+    lines.remove('14146 -> b')
 
-while len(lines) > 0:
+    while len(lines) > 0:
+        lines_to_remove = []
 
-    lines_to_remove = []
+        for line in lines:
+            a,b = line.split(' -> ')
+            a = a.split(' ')
 
-    for line in lines:
-        a,b = line.split(' -> ')
+            if len(a) == 1:
+                try:
+                    wires[b] = int(a[0])
+                except ValueError:
+                    if a[0] not in wires.keys():
+                        continue
+                    wires[b] = wires[a[0]]
 
-        a = a.split(' ')
-
-        if len(a) == 1:
-            try:
-                wires[b] = int(a[0])
-
-            except ValueError:
-                if a[0] not in wires.keys():
+            elif a[0] == 'NOT':
+                if a[1] not in wires.keys():
                     continue
+                wires[b] = 2**16 - 1 - wires[a[1]]
 
-                wires[b] = wires[a[0]]
+            else:
+                try:
+                    lhs = int(a[0])
+                except ValueError:
+                    if a[0] not in wires.keys():
+                        continue
+                    lhs = wires[a[0]]
 
-        elif a[0] == 'NOT':
-            if a[1] not in wires.keys():
-                continue
+                try:
+                    rhs = int(a[2])
+                except ValueError:
+                    if a[2] not in wires.keys():
+                        continue
+                    rhs = wires[a[2]]
+
+                if a[1] == 'AND':
+                    wires[b] = lhs & rhs
+                elif a[1] == 'OR':
+                    wires[b] = lhs | rhs
+                elif a[1] == 'LSHIFT':
+                    wires[b] = lhs * (2 ** rhs)
+                elif a[1] == 'RSHIFT':
+                    wires[b] = lhs // (2 ** rhs)
             
-            wires[b] = 2**16 - 1 - wires[a[1]]
+            lines_to_remove.append(line)
 
-        else:
-            try:
-                lhs = int(a[0])
+        for line in lines_to_remove:
+            lines.remove(line)
 
-            except ValueError:
-                if a[0] not in wires.keys():
-                    continue
+    return wires['a']
 
-                lhs = wires[a[0]]
+############################################################
+# Boilerplate
 
-            try:
-                rhs = int(a[2])
+with open(os.path.join(SCRIPT_PATH, "input.txt")) as f:
+    puzzle = [line.strip() for line in f.readlines()]
 
-            except ValueError:
-                if a[2] not in wires.keys():
-                    continue
+UNITS = ["s", "ms", "μs"]
 
-                rhs = wires[a[2]]
+PUZZLE_START = time()
+puzzle_result = solve(puzzle)
+time_taken = time() - PUZZLE_START
 
-            if a[1] == 'AND':
-                wires[b] = lhs & rhs
+unit_idx = 0
+while time_taken < 1 and unit_idx < len(UNITS) - 1:
+    time_taken *= 1000
+    unit_idx += 1
 
-            elif a[1] == 'OR':
-                wires[b] = lhs | rhs
-
-            elif a[1] == 'LSHIFT':
-                wires[b] = lhs * (2 ** rhs)
-
-            elif a[1] == 'RSHIFT':
-                wires[b] = lhs // (2 ** rhs)
-
-        
-        lines_to_remove.append(line)
-
-    for line in lines_to_remove:
-        lines.remove(line)
-
-result = wires['a']
-
-print(f'Result: {result}')
+print("Puzzle:")
+print(f"Time: {time_taken:.2f}{UNITS[unit_idx]}")
+print(f"Result: {puzzle_result}")

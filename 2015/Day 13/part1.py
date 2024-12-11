@@ -1,12 +1,23 @@
 import os
+from time import time
+SCRIPT_PATH = os.path.abspath(os.path.dirname(__file__))
 
-INPUT_FILE = os.path.join(os.path.dirname(__file__), "input.txt")
+############################################################
+# Main solution code here
 
-lookup_table = {}
+def cost(lookup_table, a, b):
+    return lookup_table[a][b] + lookup_table[b][a]
 
-with open(INPUT_FILE) as f:
-    for line in f.readlines():
-        line = line.strip().split(" ")
+def _solve(lookup_table, existing_assignment, total_people):
+    if len(existing_assignment) == total_people:
+        return cost(lookup_table, existing_assignment[-1], existing_assignment[0])
+
+    return max([cost(lookup_table, existing_assignment[-1], b) + _solve(lookup_table, existing_assignment.copy() + [b], total_people) for b in lookup_table.keys() if b not in existing_assignment])
+
+def solve(lines):
+    lookup_table = {}
+    for line in lines:
+        line = line.split(" ")
         a = line[0]
         b = line[10][:-1]
         c = int(line[3])
@@ -14,19 +25,26 @@ with open(INPUT_FILE) as f:
         if a not in lookup_table.keys():
             lookup_table[a] = {}
         lookup_table[a][b] = c
+    TOTAL_PEOPLE = len(lookup_table.keys())
+    return _solve(lookup_table, [list(lookup_table.keys())[0]], TOTAL_PEOPLE)
 
-TOTAL_PEOPLE = len(lookup_table.keys())
+############################################################
+# Boilerplate
 
-def cost(a, b):
-    return lookup_table[a][b] + lookup_table[b][a]
+with open(os.path.join(SCRIPT_PATH, "input.txt")) as f:
+    puzzle = [line.strip() for line in f.readlines()]
 
-def solve(existing_assignment):
-    if len(existing_assignment) == TOTAL_PEOPLE:
-        return cost(existing_assignment[-1], existing_assignment[0])
+UNITS = ["s", "ms", "μs"]
 
-    return max([cost(existing_assignment[-1], b) + solve(existing_assignment.copy() + [b]) for b in lookup_table.keys() if b not in existing_assignment])
+PUZZLE_START = time()
+puzzle_result = solve(puzzle)
+time_taken = time() - PUZZLE_START
 
+unit_idx = 0
+while time_taken < 1 and unit_idx < len(UNITS) - 1:
+    time_taken *= 1000
+    unit_idx += 1
 
-result = solve([list(lookup_table.keys())[0]])
-
-print(f'Result: {result}')
+print("Puzzle:")
+print(f"Time: {time_taken:.2f}{UNITS[unit_idx]}")
+print(f"Result: {puzzle_result}")
